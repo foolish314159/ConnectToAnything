@@ -17,6 +17,10 @@ public class ClientProxy extends CommonProxy {
 				.register(
 						Item.getItemFromBlock(BlocksConnectToAnything.blockSocketConnector),
 						0, R.Block.SOCKET_CONNECTOR.getResourceLocation());
+		itemModelMesher
+				.register(
+						Item.getItemFromBlock(BlocksConnectToAnything.blockSocketCable),
+						0, R.Block.SOCKET_CABLE.getResourceLocation());
 	}
 
 }

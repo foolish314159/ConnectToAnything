@@ -3,13 +3,17 @@ package connecttoanything.tileentity;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import connecttoanything.api.IConnectionProvider;
 import connecttoanything.util.Log;
 
-public class TileEntitySocketConnector extends TileEntity {
+public class TileEntitySocketConnector extends TileEntityConnectionProviderBase {
 
 	// Socket connection constants
 	private static final String HOST_UNDEFINED = "";
@@ -48,10 +52,6 @@ public class TileEntitySocketConnector extends TileEntity {
 		}
 	}
 
-	public boolean isConnected() {
-		return socket != null && !socket.isClosed();
-	}
-
 	public void writeLine(String msg) {
 		if (socket != null) {
 			try {
@@ -79,4 +79,20 @@ public class TileEntitySocketConnector extends TileEntity {
 
 		connect(HOST_UNDEFINED, PORT_UNDEFINED, true);
 	}
+
+	@Override
+	public boolean isMaster() {
+		return true;
+	}
+
+	@Override
+	public IConnectionProvider getMaster(List<IConnectionProvider> checked) {
+		return this;
+	}
+
+	@Override
+	public boolean isConnected() {
+		return socket != null && !socket.isClosed();
+	}
+
 }
