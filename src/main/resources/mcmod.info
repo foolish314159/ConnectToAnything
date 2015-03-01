@@ -1,0 +1,16 @@
+[
+{
+  "modid": "connecttoanything",
+  "name": "Connect To Anything",
+  "description": "Minecraft mod that allows you to connect to sockets",
+  "version": "0.1",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/foolish314159/ConnectToAnything",
+  "updateUrl": "",
+  "authorList": ["foolish"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
