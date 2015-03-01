@@ -1,5 +1,7 @@
 package connecttoanything.ref;
 
+import net.minecraft.client.resources.model.ModelResourceLocation;
+
 public class R {
 
 	public static final String MODID = "connecttoanything";
@@ -8,12 +10,12 @@ public class R {
 	public static final String CLIENT_PROXY_CLASS = "connecttoanything.proxy.ClientProxy";
 	public static final String SERVER_PROXY_CLASS = "connecttoanything.proxy.ServerProxy";
 
-	public static enum Blocks {
-		TODO("todo");
+	public static enum Block {
+		SOCKET_CONNECTOR("socket_connector");
 
 		private String name;
 
-		private Blocks(String name) {
+		private Block(String name) {
 			this.name = name;
 		}
 
@@ -25,8 +27,8 @@ public class R {
 			return MODID + "_" + name;
 		}
 
-		public String getResourceLocation() {
-			return MODID + ":" + name;
+		public ModelResourceLocation getResourceLocation() {
+			return new ModelResourceLocation(MODID + ":" + name, "inventory");
 		}
 	}
 

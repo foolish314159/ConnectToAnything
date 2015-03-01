@@ -5,6 +5,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import connecttoanything.init.BlocksConnectToAnything;
 import connecttoanything.proxy.CommonProxy;
 import connecttoanything.ref.R;
 
@@ -21,6 +22,7 @@ public class ConnectToAnything {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
+		BlocksConnectToAnything.init();
 		proxy.registerRenders();
 	}
 
