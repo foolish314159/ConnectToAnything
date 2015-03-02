@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import connecttoanything.api.IConnectionListener;
 import connecttoanything.api.IConnectionProvider;
 import connecttoanything.util.Log;
 import net.minecraft.tileentity.TileEntity;
@@ -67,4 +68,13 @@ public abstract class TileEntityConnectionProviderBase extends TileEntity
 		IConnectionProvider master = getMaster(null);
 		return master != null && master.isConnected();
 	}
+
+	@Override
+	public void addConnectionListener(BlockPos pos, IConnectionListener listener) {
+		IConnectionProvider master = getMaster(null);
+		if (master != null) {
+			master.addConnectionListener(pos, listener);
+		}
+	}
+
 }

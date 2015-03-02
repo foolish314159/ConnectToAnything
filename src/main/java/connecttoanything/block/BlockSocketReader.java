@@ -1,34 +1,32 @@
 package connecttoanything.block;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import connecttoanything.api.IConnectionListener;
+import connecttoanything.api.IConnectionProvider;
 import connecttoanything.ref.R;
+import connecttoanything.tileentity.TileEntitySocketCable;
 import connecttoanything.tileentity.TileEntitySocketConnector;
+import connecttoanything.tileentity.TileEntitySocketReader;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockSocketConnector extends BlockContainerBase {
+public class BlockSocketReader extends BlockContainerBase {
 
-	public BlockSocketConnector() {
-		super(TileEntitySocketConnector.class, R.Block.SOCKET_CONNECTOR);
+	public BlockSocketReader() {
+		super(TileEntitySocketReader.class, R.Block.SOCKET_READER);
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TileEntitySocketConnector();
+		return new TileEntitySocketReader();
 	}
 
 	@Override
@@ -36,13 +34,9 @@ public class BlockSocketConnector extends BlockContainerBase {
 			IBlockState state, EntityPlayer playerIn, EnumFacing side,
 			float hitX, float hitY, float hitZ) {
 		if (worldIn.isRemote) {
-			TileEntitySocketConnector te = (TileEntitySocketConnector) worldIn
+			TileEntitySocketReader te = (TileEntitySocketReader) worldIn
 					.getTileEntity(pos);
-			if (playerIn.getCurrentEquippedItem() == null) {
-				te.connect("localhost", 8888, te.isConnected());
-			} else {
-				te.writeLine("Block activated");
-			}
+			te.addConnectionListener(pos, (IConnectionListener) te);
 		}
 
 		return true;

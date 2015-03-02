@@ -28,4 +28,14 @@ public interface IConnectionProvider {
 	 * Returns true if a master with established socket is connected
 	 */
 	public boolean isConnected();
+
+	/**
+	 * Adds an {@link IConnectionListener} to the current network of providers.<br>
+	 * All listeners will be stored by the master and notified during connection
+	 * process.
+	 * 
+	 * @param pos
+	 *            - BlockPos of the listener
+	 */
+	public void addConnectionListener(BlockPos pos, IConnectionListener listener);
 }

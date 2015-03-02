@@ -11,7 +11,8 @@ public class R {
 	public static final String SERVER_PROXY_CLASS = "connecttoanything.proxy.ServerProxy";
 
 	public static enum Block {
-		SOCKET_CONNECTOR("socket_connector"), SOCKET_CABLE("socket_cable");
+		SOCKET_CONNECTOR("socket_connector"), SOCKET_CABLE("socket_cable"), SOCKET_READER(
+				"socket_reader"), SOCKET_WRITER("socket_writer");
 
 		private String name;
 
