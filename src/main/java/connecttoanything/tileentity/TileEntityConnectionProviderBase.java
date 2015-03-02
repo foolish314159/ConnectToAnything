@@ -34,4 +34,37 @@ public abstract class TileEntityConnectionProviderBase extends TileEntity
 
 		return connected;
 	}
+
+	@Override
+	public boolean isMaster() {
+		return false;
+	}
+
+	@Override
+	public IConnectionProvider getMaster(List<IConnectionProvider> checked) {
+		IConnectionProvider master = null;
+		if (checked == null) {
+			checked = new ArrayList<IConnectionProvider>();
+		}
+
+		checked.add(this);
+		List<IConnectionProvider> toCheck = getConnectedProviders();
+		toCheck.removeAll(checked);
+
+		for (IConnectionProvider connected : toCheck) {
+			IConnectionProvider possibleMaster = connected.getMaster(checked);
+			if (possibleMaster != null) {
+				master = possibleMaster;
+				break;
+			}
+		}
+
+		return master;
+	}
+
+	@Override
+	public boolean isConnected() {
+		IConnectionProvider master = getMaster(null);
+		return master != null && master.isConnected();
+	}
 }
