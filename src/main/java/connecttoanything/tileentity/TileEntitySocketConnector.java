@@ -88,7 +88,7 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 
 		if (compound.hasKey(NBT_LISTENERS)) {
 			listeners = new HashMap<BlockPos, IConnectionListener>();
-			NBTTagList listListeners = compound.getTagList(NBT_LISTENERS, 9);
+			NBTTagList listListeners = compound.getTagList(NBT_LISTENERS, 10);
 			for (int i = 0; i < listListeners.tagCount(); i++) {
 				NBTTagCompound compoundPosition = listListeners
 						.getCompoundTagAt(i);
@@ -97,7 +97,6 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 						compoundPosition.getInteger(NBT_LISTENER_POS_Y),
 						compoundPosition.getInteger(NBT_LISTENER_POS_Z));
 				listeners.put(pos, null);
-				Log.info("Read from NBT: " + pos);
 			}
 		}
 	}
@@ -108,7 +107,7 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 
 		compound.setString(NBT_HOST, host);
 		compound.setInteger(NBT_PORT, port);
-		
+
 		if (listeners != null) {
 			NBTTagList listListeners = new NBTTagList();
 			for (BlockPos pos : listeners.keySet()) {
@@ -117,7 +116,6 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 				compoundPosition.setInteger(NBT_LISTENER_POS_Y, pos.getY());
 				compoundPosition.setInteger(NBT_LISTENER_POS_Z, pos.getZ());
 				listListeners.appendTag(compoundPosition);
-				Log.info("Wrote to NBT: " + pos);
 			}
 			compound.setTag(NBT_LISTENERS, listListeners);
 		}

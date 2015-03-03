@@ -1,3 +1,5 @@
 tile.connecttoanything_socket_connector.name=Socket Connector
 tile.connecttoanything_socket_cable.name=Socket Cable
 tile.connecttoanything_socket_reader.name=Socket Reader
+
+item.connecttoanything_connection_card.name=Connection Card

@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import connecttoanything.block.BlockSocketConnector;
 import connecttoanything.init.BlocksConnectToAnything;
+import connecttoanything.init.ItemsConnectToAnything;
 import connecttoanything.proxy.CommonProxy;
 import connecttoanything.ref.R;
 import connecttoanything.tileentity.TileEntitySocketConnector;
@@ -29,6 +30,7 @@ public class ConnectToAnything {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		BlocksConnectToAnything.init();
+		ItemsConnectToAnything.init();
 		proxy.registerRenders();
 	}
 

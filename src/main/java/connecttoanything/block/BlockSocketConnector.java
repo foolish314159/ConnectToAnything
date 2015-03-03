@@ -35,7 +35,7 @@ public class BlockSocketConnector extends BlockContainerBase {
 	public boolean onBlockActivated(World worldIn, BlockPos pos,
 			IBlockState state, EntityPlayer playerIn, EnumFacing side,
 			float hitX, float hitY, float hitZ) {
-		if (worldIn.isRemote) {
+		if (!worldIn.isRemote) {
 			TileEntitySocketConnector te = (TileEntitySocketConnector) worldIn
 					.getTileEntity(pos);
 			if (playerIn.getCurrentEquippedItem() == null) {

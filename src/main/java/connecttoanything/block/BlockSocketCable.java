@@ -24,24 +24,6 @@ public class BlockSocketCable extends BlockContainerBase {
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos,
-			IBlockState state, EntityPlayer playerIn, EnumFacing side,
-			float hitX, float hitY, float hitZ) {
-		if (worldIn.isRemote) {
-			TileEntitySocketCable te = (TileEntitySocketCable) worldIn
-					.getTileEntity(pos);
-			TileEntitySocketConnector master = (TileEntitySocketConnector) te
-					.getMaster(null);
-
-			worldIn.setBlockState(new BlockPos(master.getPos().getX(), master
-					.getPos().getY() + 1, master.getPos().getZ()),
-					Blocks.cobblestone.getDefaultState());
-		}
-
-		return true;
-	}
-
-	@Override
 	public boolean isOpaqueCube() {
 		return false;
 	}

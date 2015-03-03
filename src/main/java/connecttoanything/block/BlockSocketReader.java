@@ -33,7 +33,7 @@ public class BlockSocketReader extends BlockContainerBase {
 	public boolean onBlockActivated(World worldIn, BlockPos pos,
 			IBlockState state, EntityPlayer playerIn, EnumFacing side,
 			float hitX, float hitY, float hitZ) {
-		if (worldIn.isRemote) {
+		if (!worldIn.isRemote) {
 			TileEntitySocketReader te = (TileEntitySocketReader) worldIn
 					.getTileEntity(pos);
 			te.addConnectionListener(pos, (IConnectionListener) te);
