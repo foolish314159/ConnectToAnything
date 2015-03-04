@@ -2,6 +2,7 @@ package connecttoanything.ref;
 
 import javafx.beans.Observable;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.util.ResourceLocation;
 
 public class R {
 
@@ -13,7 +14,7 @@ public class R {
 
 	public static enum Item {
 		CONNECTION_CARD("connection_card");
-		
+
 		private String name;
 
 		private Item(String name) {
@@ -32,7 +33,7 @@ public class R {
 			return new ModelResourceLocation(MODID + ":" + name, "inventory");
 		}
 	}
-	
+
 	public static enum Block {
 		SOCKET_CONNECTOR("socket_connector"), SOCKET_CABLE("socket_cable"), SOCKET_READER(
 				"socket_reader"), SOCKET_WRITER("socket_writer");
@@ -53,6 +54,40 @@ public class R {
 
 		public ModelResourceLocation getResourceLocation() {
 			return new ModelResourceLocation(MODID + ":" + name, "inventory");
+		}
+	}
+
+	public static enum GUI {
+		CONNECTION_CARD("item/connection_card.png", 176, 110);
+
+		private ResourceLocation res;
+		private int width, height;
+
+		private GUI(String resourceLocation, int width, int height) {
+			res = new ResourceLocation(MODID + ":textures/gui/"
+					+ resourceLocation);
+			this.width = width;
+			this.height = height;
+		}
+
+		public ResourceLocation getResource() {
+			return res;
+		}
+
+		public int centerX(int screenWidth) {
+			return (screenWidth - width) / 2;
+		}
+
+		public int centerY(int screenHeight) {
+			return (screenHeight - height) / 2;
+		}
+
+		public int getWidth() {
+			return width;
+		}
+
+		public int getHeight() {
+			return height;
 		}
 	}
 

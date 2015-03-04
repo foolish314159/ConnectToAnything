@@ -2,8 +2,10 @@ package connecttoanything.item;
 
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
@@ -19,6 +21,8 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import connecttoanything.ConnectToAnything;
+import connecttoanything.client.gui.GuiConnectionCard;
 import connecttoanything.init.ItemsConnectToAnything;
 import connecttoanything.ref.R;
 
@@ -27,8 +31,8 @@ public class ItemConnectionCard extends Item {
 	// NBT keys
 	private static final String NBT_BASE = ItemConnectionCard.class
 			.getSimpleName();
-	private static final String NBT_HOST = NBT_BASE + ".host";
-	private static final String NBT_PORT = NBT_BASE + ".port";
+	public static final String NBT_HOST = NBT_BASE + ".host";
+	public static final String NBT_PORT = NBT_BASE + ".port";
 
 	public ItemConnectionCard() {
 		setUnlocalizedName(R.Item.CONNECTION_CARD.getUnlocalizedName());
@@ -67,52 +71,11 @@ public class ItemConnectionCard extends Item {
 	@Override
 	public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn,
 			EntityPlayer playerIn) {
-		// playerIn.displayGui(new ConnectionCard(worldIn,
-		// playerIn.getPosition()));
-		playerIn.displayGUIBook(new ItemStack(Items.written_book));
+		playerIn.openGui(ConnectToAnything.instance, R.GUI.CONNECTION_CARD
+				.ordinal(), worldIn, playerIn.getPosition().getX(), playerIn
+				.getPosition().getY(), playerIn.getPosition().getZ());
 
 		return itemStackIn;
-	}
-
-	public static class ConnectionCard implements IInteractionObject {
-
-		private final World world;
-		private final BlockPos position;
-
-		public ConnectionCard(World worldIn, BlockPos pos) {
-			this.world = worldIn;
-			this.position = pos;
-		}
-
-		@Override
-		public String getName() {
-			return R.Item.CONNECTION_CARD.getName();
-		}
-
-		@Override
-		public boolean hasCustomName() {
-			return false;
-		}
-
-		@Override
-		public IChatComponent getDisplayName() {
-			return new ChatComponentTranslation(
-					ItemsConnectToAnything.itemConnectionCard.getUnlocalizedName()
-							+ ".name", new Object[0]);
-		}
-
-		@Override
-		public Container createContainer(InventoryPlayer playerInventory,
-				EntityPlayer playerIn) {
-			return new ContainerRepair(playerInventory, world, position,
-					playerIn);
-		}
-
-		@Override
-		public String getGuiID() {
-			return "minecraft:anvil";
-		}
-
 	}
 
 }
