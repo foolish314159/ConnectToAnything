@@ -3,6 +3,7 @@ package connecttoanything.tileentity;
 import java.net.Socket;
 
 import connecttoanything.api.IConnectionListener;
+import connecttoanything.api.TileEntityConnectionProviderBase;
 import connecttoanything.util.Log;
 
 public class TileEntitySocketReader extends TileEntityConnectionProviderBase

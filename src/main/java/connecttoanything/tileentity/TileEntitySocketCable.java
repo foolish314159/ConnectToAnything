@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import connecttoanything.api.IConnectionProvider;
+import connecttoanything.api.TileEntityConnectionProviderBase;
 import connecttoanything.util.Log;
 
 public class TileEntitySocketCable extends TileEntityConnectionProviderBase {

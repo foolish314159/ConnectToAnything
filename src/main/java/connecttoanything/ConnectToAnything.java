@@ -14,6 +14,7 @@ import connecttoanything.block.BlockSocketConnector;
 import connecttoanything.handler.GUIHandler;
 import connecttoanything.init.BlocksConnectToAnything;
 import connecttoanything.init.ItemsConnectToAnything;
+import connecttoanything.network.NetworkHandler;
 import connecttoanything.proxy.CommonProxy;
 import connecttoanything.ref.R;
 import connecttoanything.tileentity.TileEntitySocketConnector;
@@ -32,6 +33,7 @@ public class ConnectToAnything {
 	public void preinit(FMLPreInitializationEvent event) {
 		BlocksConnectToAnything.init();
 		ItemsConnectToAnything.init();
+		NetworkHandler.init();
 	}
 
 	@EventHandler

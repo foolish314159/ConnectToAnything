@@ -17,6 +17,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants.NBT;
 import connecttoanything.api.IConnectionListener;
 import connecttoanything.api.IConnectionProvider;
+import connecttoanything.api.TileEntityConnectionProviderBase;
 import connecttoanything.util.Log;
 
 public class TileEntitySocketConnector extends TileEntityConnectionProviderBase

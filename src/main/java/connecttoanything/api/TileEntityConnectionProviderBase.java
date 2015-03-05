@@ -1,17 +1,24 @@
-package connecttoanything.tileentity;
+package connecttoanything.api;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import connecttoanything.api.IConnectionListener;
-import connecttoanything.api.IConnectionProvider;
 import connecttoanything.util.Log;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3i;
 
+/**
+ * Basic version of a {@link TileEntity} implementing
+ * {@link IConnectionProvider} which basically behaves like a cable.<br>
+ * Can be subclassed by custom blocks to give access to a network while adding
+ * additionally functionality.
+ * 
+ * @author Tom
+ *
+ */
 public abstract class TileEntityConnectionProviderBase extends TileEntity
 		implements IConnectionProvider {
 

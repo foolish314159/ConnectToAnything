@@ -2,6 +2,8 @@ package connecttoanything.client.gui;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -17,6 +19,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import connecttoanything.init.ItemsConnectToAnything;
 import connecttoanything.item.ItemConnectionCard;
+import connecttoanything.network.MessageConnectionCardChange;
+import connecttoanything.network.NetworkHandler;
 import connecttoanything.ref.R;
 import connecttoanything.util.Log;
 
@@ -29,6 +33,9 @@ public class GuiConnectionCard extends GuiScreen {
 	private GuiTextField textfieldPort;
 	private GuiButton buttonSave;
 	private R.GUI gui;
+
+	private static final String REGEX_IP_V4 = "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b";
+	private static final String REGEX_PORT = "[0-9]{1,5}";
 
 	public GuiConnectionCard(InventoryPlayer inventory) {
 		playerInventory = inventory;
@@ -116,12 +123,21 @@ public class GuiConnectionCard extends GuiScreen {
 
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
-		// TODO send packet to server and save NBT serverside
-		NBTTagCompound compound = stackCard.getTagCompound();
-		compound.setString(ItemConnectionCard.NBT_HOST, textfieldHost.getText());
-		compound.setInteger(ItemConnectionCard.NBT_PORT,
-				Integer.valueOf(textfieldPort.getText()));
-		Log.info(compound.getString(ItemConnectionCard.NBT_HOST) + " - "
-				+ compound.getInteger(ItemConnectionCard.NBT_PORT));
+		boolean ipValid = textfieldHost.getText().matches(REGEX_IP_V4);
+		boolean portValid = textfieldPort.getText().matches(REGEX_PORT);
+		if (!ipValid) {
+			textfieldHost.setTextColor(Color.RED.getRGB());
+		}
+		if (!portValid) {
+			textfieldPort.setTextColor(Color.RED.getRGB());
+		}
+
+		if (ipValid && portValid) {
+			textfieldHost.setTextColor(Color.WHITE.getRGB());
+			textfieldPort.setTextColor(Color.WHITE.getRGB());
+			NetworkHandler.sendToServer(new MessageConnectionCardChange(
+					textfieldHost.getText(), Integer.valueOf(textfieldPort
+							.getText())));
+		}
 	}
 }
