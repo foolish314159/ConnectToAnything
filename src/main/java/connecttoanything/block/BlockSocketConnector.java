@@ -3,6 +3,7 @@ package connecttoanything.block;
 import java.util.ArrayList;
 import java.util.List;
 
+import connecttoanything.ConnectToAnything;
 import connecttoanything.ref.R;
 import connecttoanything.tileentity.TileEntitySocketConnector;
 import net.minecraft.block.BlockContainer;
@@ -35,15 +36,9 @@ public class BlockSocketConnector extends BlockContainerBase {
 	public boolean onBlockActivated(World worldIn, BlockPos pos,
 			IBlockState state, EntityPlayer playerIn, EnumFacing side,
 			float hitX, float hitY, float hitZ) {
-		if (!worldIn.isRemote) {
-			TileEntitySocketConnector te = (TileEntitySocketConnector) worldIn
-					.getTileEntity(pos);
-			if (playerIn.getCurrentEquippedItem() == null) {
-				te.connect("localhost", 8888, te.isConnected());
-			} else {
-				te.writeLine("Block activated");
-			}
-		}
+		playerIn.openGui(ConnectToAnything.instance,
+				R.GUI.SOCKET_CONNECTOR.ordinal(), worldIn, pos.getX(),
+				pos.getY(), pos.getZ());
 
 		return true;
 	}

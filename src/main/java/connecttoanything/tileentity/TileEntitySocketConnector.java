@@ -3,25 +3,29 @@ package connecttoanything.tileentity;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 import connecttoanything.api.IConnectionListener;
 import connecttoanything.api.IConnectionProvider;
 import connecttoanything.api.TileEntityConnectionProviderBase;
+import connecttoanything.item.ItemConnectionCard;
+import connecttoanything.ref.R;
 import connecttoanything.util.Log;
 
 public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
-		implements IConnectionListener {
+		implements IConnectionListener, IInventory {
 
 	// Socket connection constants
 	private static final String HOST_UNDEFINED = "";
@@ -42,6 +46,7 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 	private String host = HOST_UNDEFINED;
 	private int port = PORT_UNDEFINED;
 	private Map<BlockPos, IConnectionListener> listeners = null;
+	private ItemStack inventoryCard = null;
 
 	public void connect(String host, int port, boolean disconnect) {
 		if (disconnect && socket != null) {
@@ -86,6 +91,7 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 
 		host = compound.getString(NBT_HOST);
 		port = compound.getInteger(NBT_PORT);
+		inventoryCard = ItemStack.loadItemStackFromNBT(compound);
 
 		if (compound.hasKey(NBT_LISTENERS)) {
 			listeners = new HashMap<BlockPos, IConnectionListener>();
@@ -108,6 +114,7 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 
 		compound.setString(NBT_HOST, host);
 		compound.setInteger(NBT_PORT, port);
+		inventoryCard.writeToNBT(compound);
 
 		if (listeners != null) {
 			NBTTagList listListeners = new NBTTagList();
@@ -179,6 +186,88 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 	public void onFail(Exception e) {
 		socket = null;
 		Log.severe(e.getMessage());
+	}
+
+	@Override
+	public String getName() {
+		return R.Block.SOCKET_CONNECTOR.getName();
+	}
+
+	@Override
+	public boolean hasCustomName() {
+		return false;
+	}
+
+	@Override
+	public IChatComponent getDisplayName() {
+		return new ChatComponentText(getName());
+	}
+
+	@Override
+	public int getSizeInventory() {
+		return 1;
+	}
+
+	@Override
+	public ItemStack getStackInSlot(int index) {
+		return inventoryCard;
+	}
+
+	@Override
+	public ItemStack decrStackSize(int index, int count) {
+		return inventoryCard;
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int index) {
+		return inventoryCard;
+	}
+
+	@Override
+	public void setInventorySlotContents(int index, ItemStack stack) {
+		inventoryCard = stack;
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return 1;
+	}
+
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer player) {
+		return worldObj.getTileEntity(pos) == this
+				&& player.getDistanceSq(pos.add(.5, .5, .5)) < 64;
+	}
+
+	@Override
+	public void openInventory(EntityPlayer player) {
+	}
+
+	@Override
+	public void closeInventory(EntityPlayer player) {
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int index, ItemStack stack) {
+		return stack.getItem() instanceof ItemConnectionCard;
+	}
+
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
 	}
 
 }
