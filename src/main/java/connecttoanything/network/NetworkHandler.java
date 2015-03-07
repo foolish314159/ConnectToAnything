@@ -15,6 +15,8 @@ public class NetworkHandler {
 
 		INSTANCE.registerMessage(MessageConnectionCardChange.class,
 				MessageConnectionCardChange.class, 0, Side.SERVER);
+		INSTANCE.registerMessage(MessageConnect.class, MessageConnect.class, 1,
+				Side.SERVER);
 	}
 
 	public static void sendToServer(IMessage message) {

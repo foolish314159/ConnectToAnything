@@ -76,16 +76,6 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 		}
 	}
 
-	public void writeLine(String msg) {
-		if (socket != null) {
-			try {
-				socket.getOutputStream().write((msg + "\n").getBytes());
-			} catch (IOException e) {
-				Log.severe(e.getMessage());
-			}
-		}
-	}
-
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);

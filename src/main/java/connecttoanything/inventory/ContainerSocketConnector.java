@@ -1,6 +1,7 @@
 package connecttoanything.inventory;
 
 import connecttoanything.util.Log;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;

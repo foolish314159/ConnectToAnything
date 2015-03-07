@@ -2,27 +2,22 @@ package connecttoanything.client.gui;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.StatCollector;
-import net.minecraftforge.fml.common.registry.LanguageRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import org.lwjgl.input.Keyboard;
+
 import connecttoanything.init.ItemsConnectToAnything;
 import connecttoanything.item.ItemConnectionCard;
 import connecttoanything.network.MessageConnectionCardChange;
 import connecttoanything.network.NetworkHandler;
 import connecttoanything.ref.R;
-import connecttoanything.util.Log;
 
 @SideOnly(Side.CLIENT)
 public class GuiConnectionCard extends GuiScreen {
@@ -46,6 +41,8 @@ public class GuiConnectionCard extends GuiScreen {
 	@Override
 	public void initGui() {
 		super.initGui();
+
+		Keyboard.enableRepeatEvents(true);
 
 		textfieldHost = GUIUtil.createCenteredTextFieldOnGUI(fontRendererObj,
 				this, gui, fontRendererObj.getStringWidth("255_255_255_255"),
@@ -71,6 +68,13 @@ public class GuiConnectionCard extends GuiScreen {
 		buttonSave = GUIUtil.createCenteredButtonOnGUI(0, this, gui, 80,
 				textfieldPort.getWidth(), "Save");
 		buttonList.add(buttonSave);
+	}
+
+	@Override
+	public void onGuiClosed() {
+		super.onGuiClosed();
+
+		Keyboard.enableRepeatEvents(false);
 	}
 
 	@Override
@@ -123,7 +127,8 @@ public class GuiConnectionCard extends GuiScreen {
 
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
-		boolean ipValid = textfieldHost.getText().matches(REGEX_IP_V4);
+		boolean ipValid = textfieldHost.getText().matches(REGEX_IP_V4)
+				|| textfieldHost.getText().equals("localhost");
 		boolean portValid = textfieldPort.getText().matches(REGEX_PORT);
 		if (!ipValid) {
 			textfieldHost.setTextColor(Color.RED.getRGB());
