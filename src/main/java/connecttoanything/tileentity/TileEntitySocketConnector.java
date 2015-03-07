@@ -36,6 +36,7 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 			.getSimpleName();
 	private static final String NBT_HOST = NBT_BASE + ".host";
 	private static final String NBT_PORT = NBT_BASE + ".port";
+	private static final String NBT_CARD = NBT_BASE + ".card";
 	private static final String NBT_LISTENERS = NBT_BASE + ".listeners";
 	private static final String NBT_LISTENER_POS_X = NBT_BASE + ".pos_x";
 	private static final String NBT_LISTENER_POS_Y = NBT_BASE + ".pos_y";
@@ -91,8 +92,8 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 
 		host = compound.getString(NBT_HOST);
 		port = compound.getInteger(NBT_PORT);
-		inventoryCard = ItemStack.loadItemStackFromNBT(compound);
-		setInventorySlotContents(0, inventoryCard);
+		NBTTagCompound compoundCard = compound.getCompoundTag(NBT_CARD);
+		inventoryCard = ItemStack.loadItemStackFromNBT(compoundCard);
 
 		if (compound.hasKey(NBT_LISTENERS)) {
 			listeners = new HashMap<BlockPos, IConnectionListener>();
@@ -115,9 +116,11 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 
 		compound.setString(NBT_HOST, host);
 		compound.setInteger(NBT_PORT, port);
+		NBTTagCompound compoundCard = new NBTTagCompound();
 		if (inventoryCard != null) {
-			inventoryCard.writeToNBT(compound);
+			inventoryCard.writeToNBT(compoundCard);
 		}
+		compound.setTag(NBT_CARD, compoundCard);
 
 		if (listeners != null) {
 			NBTTagList listListeners = new NBTTagList();
