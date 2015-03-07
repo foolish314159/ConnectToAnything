@@ -10,6 +10,22 @@ import connecttoanything.ref.R;
 
 public class GUIUtil {
 
+	public static int drawCenteredStringOnGuiForeground(
+			FontRenderer fontRendererObj, Item item, R.GUI gui, int height,
+			int color) {
+		return drawCenteredStringOnGuiForeground(
+				fontRendererObj,
+				StatCollector.translateToLocal(item.getUnlocalizedName()
+						+ ".name"), gui, height, color);
+	}
+
+	public static int drawCenteredStringOnGuiForeground(
+			FontRenderer fontRendererObj, String text, R.GUI gui, int height,
+			int color) {
+		return fontRendererObj.drawString(text, gui.getWidth() / 2
+				- fontRendererObj.getStringWidth(text) / 2, height, color);
+	}
+
 	public static int drawCenteredStringOnGUI(FontRenderer fontRendererObj,
 			Item item, GuiScreen screen, R.GUI gui, int offsetY, int color) {
 		String text = StatCollector.translateToLocal(item.getUnlocalizedName()

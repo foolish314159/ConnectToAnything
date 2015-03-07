@@ -92,6 +92,7 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 		host = compound.getString(NBT_HOST);
 		port = compound.getInteger(NBT_PORT);
 		inventoryCard = ItemStack.loadItemStackFromNBT(compound);
+		setInventorySlotContents(0, inventoryCard);
 
 		if (compound.hasKey(NBT_LISTENERS)) {
 			listeners = new HashMap<BlockPos, IConnectionListener>();
@@ -114,7 +115,9 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 
 		compound.setString(NBT_HOST, host);
 		compound.setInteger(NBT_PORT, port);
-		inventoryCard.writeToNBT(compound);
+		if (inventoryCard != null) {
+			inventoryCard.writeToNBT(compound);
+		}
 
 		if (listeners != null) {
 			NBTTagList listListeners = new NBTTagList();
@@ -215,7 +218,9 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 
 	@Override
 	public ItemStack decrStackSize(int index, int count) {
-		return inventoryCard;
+		ItemStack stack = inventoryCard;
+		inventoryCard = null;
+		return stack;
 	}
 
 	@Override
@@ -225,7 +230,10 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 
 	@Override
 	public void setInventorySlotContents(int index, ItemStack stack) {
-		inventoryCard = stack;
+		if (isItemValidForSlot(index, stack)) {
+			inventoryCard = stack;
+		}
+		markDirty();
 	}
 
 	@Override
@@ -249,7 +257,7 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 
 	@Override
 	public boolean isItemValidForSlot(int index, ItemStack stack) {
-		return stack.getItem() instanceof ItemConnectionCard;
+		return stack != null && stack.getItem() instanceof ItemConnectionCard;
 	}
 
 	@Override
