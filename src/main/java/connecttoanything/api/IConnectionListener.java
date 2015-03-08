@@ -12,6 +12,11 @@ public interface IConnectionListener {
 	public void onConnected(Socket s);
 
 	/**
+	 * Called when a socket connector disconnects from a connection
+	 */
+	public void onDisconnected();
+
+	/**
 	 * Called when a socket connector failed to establish a connection
 	 * 
 	 * @param e

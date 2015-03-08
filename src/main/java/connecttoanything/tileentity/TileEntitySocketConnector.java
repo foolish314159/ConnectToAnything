@@ -20,6 +20,7 @@ import net.minecraft.util.IChatComponent;
 import connecttoanything.api.IConnectionListener;
 import connecttoanything.api.IConnectionProvider;
 import connecttoanything.api.TileEntityConnectionProviderBase;
+import connecttoanything.client.gui.inventory.GuiSocketConnector;
 import connecttoanything.item.ItemConnectionCard;
 import connecttoanything.ref.R;
 import connecttoanything.util.Log;
@@ -50,7 +51,7 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 	private ItemStack inventoryCard = null;
 
 	public void connect(String host, int port, boolean disconnect) {
-		if (disconnect && socket != null) {
+		if (disconnect) {
 			try {
 				socket.close();
 			} catch (IOException e) {
@@ -179,9 +180,22 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 	}
 
 	@Override
+	public void onDisconnected() {
+		socket = null;
+	}
+
+	@Override
 	public void onFail(Exception e) {
 		socket = null;
 		Log.severe(e.getMessage());
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public int getPort() {
+		return port;
 	}
 
 	@Override

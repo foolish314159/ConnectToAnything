@@ -23,6 +23,8 @@ import connecttoanything.util.Log;
 
 public class GuiSocketConnector extends GuiContainer {
 
+	public static GuiSocketConnector instance = null;
+
 	private IInventory inventory;
 	private R.GUI gui;
 	private boolean connected = false;
@@ -35,6 +37,13 @@ public class GuiSocketConnector extends GuiContainer {
 
 		this.inventory = inventory;
 		this.gui = R.GUI.SOCKET_CONNECTOR;
+
+		TileEntitySocketConnector connector = (TileEntitySocketConnector) inventory;
+		connected = connector.isConnected();
+	}
+
+	public void setConnected(boolean connected) {
+		this.connected = connected;
 	}
 
 	@Override
@@ -44,6 +53,15 @@ public class GuiSocketConnector extends GuiContainer {
 		buttonConnect = new GuiButton(0, gui.centerX(width) + 7,
 				gui.centerY(height) + 57, 50, 20, "Connect");
 		buttonList.add(buttonConnect);
+
+		instance = this;
+	}
+
+	@Override
+	public void onGuiClosed() {
+		super.onGuiClosed();
+
+		instance = null;
 	}
 
 	@Override
@@ -67,18 +85,22 @@ public class GuiSocketConnector extends GuiContainer {
 				Color.DARK_GRAY.getRGB());
 
 		ItemStack card = inventory.getStackInSlot(36);
-		if (card != null) {
-			String host = card.getTagCompound().getString(
-					ItemConnectionCard.NBT_HOST);
-			int port = card.getTagCompound().getInteger(
-					ItemConnectionCard.NBT_PORT);
-			TileEntitySocketConnector connector = (TileEntitySocketConnector) inventory;
-			connected = connector.isConnected();
+		if (connected || card != null) {
+			String host = "";
+			int port = -1;
+			if (card != null) {
+				host = card.getTagCompound().getString(
+						ItemConnectionCard.NBT_HOST);
+				port = card.getTagCompound().getInteger(
+						ItemConnectionCard.NBT_PORT);
+			}
+
 			String textConnected = connected ? "Yes" : "No";
 			Color colorConnected = connected ? Color.GREEN : Color.RED;
+
 			fontRendererObj.drawString(host, gui.getWidth() - 85, 27,
 					Color.DARK_GRAY.getRGB());
-			fontRendererObj.drawString(String.valueOf(port),
+			fontRendererObj.drawString(port != -1 ? String.valueOf(port) : "",
 					gui.getWidth() - 85, 42, Color.DARK_GRAY.getRGB());
 			fontRendererObj.drawString(textConnected, gui.getWidth() - 55, 63,
 					colorConnected.getRGB());

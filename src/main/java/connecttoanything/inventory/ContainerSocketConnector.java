@@ -1,20 +1,28 @@
 package connecttoanything.inventory;
 
-import connecttoanything.util.Log;
-import net.minecraft.client.network.NetHandlerPlayClient;
+import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import connecttoanything.client.gui.inventory.GuiSocketConnector;
+import connecttoanything.tileentity.TileEntitySocketConnector;
 
 public class ContainerSocketConnector extends Container {
 
+	private static final int UPDATE_ID_CONNECTED = 0;
+
 	private IInventory inventoryConnector;
+	private boolean connected;
 
 	public ContainerSocketConnector(IInventory inventoryPlayer,
 			IInventory inventoryConnector, EntityPlayer player) {
 		this.inventoryConnector = inventoryConnector;
+		connected = ((TileEntitySocketConnector) inventoryConnector)
+				.isConnected();
 		inventoryConnector.openInventory(player);
 
 		this.addSlotToContainer(new SlotConnectionCard(inventoryConnector, 36,
@@ -70,6 +78,33 @@ public class ContainerSocketConnector extends Container {
 	public void putStackInSlot(int index, ItemStack stack) {
 		if (inventoryConnector.isItemValidForSlot(index, stack)) {
 			super.putStackInSlot(index, stack);
+		}
+	}
+
+	@Override
+	public void detectAndSendChanges() {
+		super.detectAndSendChanges();
+
+		boolean c = ((TileEntitySocketConnector) inventoryConnector)
+				.isConnected();
+		for (ICrafting crafter : (List<ICrafting>) crafters) {
+			crafter.sendProgressBarUpdate(this, UPDATE_ID_CONNECTED, c ? 1 : 0);
+		}
+	}
+
+	@Override
+	public void updateProgressBar(int id, int data) {
+		super.updateProgressBar(id, data);
+
+		switch (id) {
+		case UPDATE_ID_CONNECTED:
+			connected = (data == 1);
+			if (GuiSocketConnector.instance != null) {
+				GuiSocketConnector.instance.setConnected(connected);
+			}
+			break;
+		default:
+			break;
 		}
 	}
 

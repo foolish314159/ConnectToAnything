@@ -19,4 +19,9 @@ public class TileEntitySocketReader extends TileEntityConnectionProviderBase
 		Log.severe("Reader notified: " + e.getMessage());
 	}
 
+	@Override
+	public void onDisconnected() {
+		Log.info("Reader notified: Disconnected");
+	}
+
 }
