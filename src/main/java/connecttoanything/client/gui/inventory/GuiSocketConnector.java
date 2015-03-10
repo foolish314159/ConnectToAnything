@@ -25,7 +25,7 @@ public class GuiSocketConnector extends GuiContainer {
 
 	public static GuiSocketConnector instance = null;
 
-	private IInventory inventory;
+	private TileEntitySocketConnector connector;
 	private R.GUI gui;
 	private boolean connected = false;
 	private GuiButton buttonConnect;
@@ -35,11 +35,8 @@ public class GuiSocketConnector extends GuiContainer {
 				Minecraft.getMinecraft().thePlayer.inventory, inventory,
 				Minecraft.getMinecraft().thePlayer));
 
-		this.inventory = inventory;
 		this.gui = R.GUI.SOCKET_CONNECTOR;
-
-		TileEntitySocketConnector connector = (TileEntitySocketConnector) inventory;
-		connected = connector.isConnected();
+		connector = (TileEntitySocketConnector) inventory;
 	}
 
 	public void setConnected(boolean connected) {
@@ -84,7 +81,7 @@ public class GuiSocketConnector extends GuiContainer {
 		fontRendererObj.drawString("Connected: ", 65, 63,
 				Color.DARK_GRAY.getRGB());
 
-		ItemStack card = inventory.getStackInSlot(36);
+		ItemStack card = connector.getStackInSlot(36);
 		if (connected || card != null) {
 			String host = "";
 			int port = -1;
@@ -110,10 +107,9 @@ public class GuiSocketConnector extends GuiContainer {
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
-		ItemStack card = inventory.getStackInSlot(36);
+		ItemStack card = connector.getStackInSlot(36);
 		if (card != null) {
-			TileEntity te = (TileEntity) inventory;
-			NetworkHandler.sendToServer(new MessageConnect(connected, te
+			NetworkHandler.sendToServer(new MessageConnect(connected, connector
 					.getPos()));
 		}
 	}

@@ -15,14 +15,13 @@ public class ContainerSocketConnector extends Container {
 
 	private static final int UPDATE_ID_CONNECTED = 0;
 
-	private IInventory inventoryConnector;
+	private TileEntitySocketConnector connector;
 	private boolean connected;
 
 	public ContainerSocketConnector(IInventory inventoryPlayer,
 			IInventory inventoryConnector, EntityPlayer player) {
-		this.inventoryConnector = inventoryConnector;
-		connected = ((TileEntitySocketConnector) inventoryConnector)
-				.isConnected();
+		this.connector = (TileEntitySocketConnector) inventoryConnector;
+		connected = connector.isConnected();
 		inventoryConnector.openInventory(player);
 
 		this.addSlotToContainer(new SlotConnectionCard(inventoryConnector, 36,
@@ -43,7 +42,7 @@ public class ContainerSocketConnector extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		return inventoryConnector.isUseableByPlayer(playerIn);
+		return connector.isUseableByPlayer(playerIn);
 	}
 
 	@Override
@@ -76,7 +75,7 @@ public class ContainerSocketConnector extends Container {
 
 	@Override
 	public void putStackInSlot(int index, ItemStack stack) {
-		if (inventoryConnector.isItemValidForSlot(index, stack)) {
+		if (connector.isItemValidForSlot(index, stack)) {
 			super.putStackInSlot(index, stack);
 		}
 	}
@@ -85,10 +84,9 @@ public class ContainerSocketConnector extends Container {
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
 
-		boolean c = ((TileEntitySocketConnector) inventoryConnector)
-				.isConnected();
 		for (ICrafting crafter : (List<ICrafting>) crafters) {
-			crafter.sendProgressBarUpdate(this, UPDATE_ID_CONNECTED, c ? 1 : 0);
+			crafter.sendProgressBarUpdate(this, UPDATE_ID_CONNECTED,
+					connector.isConnected() ? 1 : 0);
 		}
 	}
 
@@ -117,7 +115,7 @@ public class ContainerSocketConnector extends Container {
 
 		@Override
 		public boolean isItemValid(ItemStack stack) {
-			return inventoryConnector.isItemValidForSlot(36, stack);
+			return connector.isItemValidForSlot(36, stack);
 		}
 
 		@Override

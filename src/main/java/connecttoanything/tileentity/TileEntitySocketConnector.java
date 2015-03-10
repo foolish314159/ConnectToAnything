@@ -3,6 +3,7 @@ package connecttoanything.tileentity;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,14 +51,34 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 	private Map<BlockPos, IConnectionListener> listeners = null;
 	private ItemStack inventoryCard = null;
 
+	// Keep track of sockets to close on server stop
+	public static List<Socket> sockets;
+
+	@Override
+	public void onChunkUnload() {
+		super.onChunkUnload();
+
+		connect(HOST_UNDEFINED, PORT_UNDEFINED, true);
+	}
+
 	public void connect(String host, int port, boolean disconnect) {
+		if (!listeners.containsKey(pos)) {
+			listeners.put(pos, this);
+		}
+
 		if (disconnect) {
-			try {
-				socket.close();
-			} catch (IOException e) {
-				Log.severe(e.getMessage());
-			} finally {
-				socket = null;
+			if (socket != null) {
+				try {
+					sockets.remove(socket);
+					socket.close();
+				} catch (IOException e) {
+					Log.severe(e.getMessage());
+				} finally {
+					socket = null;
+					for (IConnectionListener listener : listeners.values()) {
+						listener.onDisconnected();
+					}
+				}
 			}
 		} else if (!host.equals(HOST_UNDEFINED) && port != PORT_UNDEFINED) {
 			this.host = host;
@@ -124,8 +145,6 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 			}
 			compound.setTag(NBT_LISTENERS, listListeners);
 		}
-
-		connect(HOST_UNDEFINED, PORT_UNDEFINED, true);
 	}
 
 	@Override
@@ -177,6 +196,10 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 
 	@Override
 	public void onConnected(Socket s) {
+		if (sockets == null) {
+			sockets = new ArrayList<Socket>();
+		}
+		sockets.add(s);
 	}
 
 	@Override
