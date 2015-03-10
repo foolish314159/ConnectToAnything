@@ -3,11 +3,12 @@ package connecttoanything.tileentity;
 import java.net.Socket;
 
 import connecttoanything.api.IConnectionListener;
+import connecttoanything.api.IReader;
 import connecttoanything.api.TileEntityConnectionProviderBase;
 import connecttoanything.util.Log;
 
 public class TileEntitySocketReader extends TileEntityConnectionProviderBase
-		implements IConnectionListener {
+		implements IConnectionListener, IReader {
 
 	@Override
 	public void onConnected(Socket s) {
@@ -22,6 +23,11 @@ public class TileEntitySocketReader extends TileEntityConnectionProviderBase
 	@Override
 	public void onDisconnected() {
 		Log.info("Reader notified: Disconnected");
+	}
+
+	@Override
+	public void onRead(String line) {
+		Log.info("Reader read line: " + line);
 	}
 
 }

@@ -1,6 +1,9 @@
 package connecttoanything.tileentity;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -20,6 +23,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import connecttoanything.api.IConnectionListener;
 import connecttoanything.api.IConnectionProvider;
+import connecttoanything.api.IReader;
 import connecttoanything.api.TileEntityConnectionProviderBase;
 import connecttoanything.client.gui.inventory.GuiSocketConnector;
 import connecttoanything.item.ItemConnectionCard;
@@ -40,26 +44,21 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 	private static final String NBT_PORT = NBT_BASE + ".port";
 	private static final String NBT_CARD = NBT_BASE + ".card";
 	private static final String NBT_LISTENERS = NBT_BASE + ".listeners";
-	private static final String NBT_LISTENER_POS_X = NBT_BASE + ".pos_x";
-	private static final String NBT_LISTENER_POS_Y = NBT_BASE + ".pos_y";
-	private static final String NBT_LISTENER_POS_Z = NBT_BASE + ".pos_z";
+	private static final String NBT_READERS = NBT_BASE + ".readers";
+	private static final String NBT_POS_X = NBT_BASE + ".pos_x";
+	private static final String NBT_POS_Y = NBT_BASE + ".pos_y";
+	private static final String NBT_POS_Z = NBT_BASE + ".pos_z";
 
 	// Tile members
 	private Socket socket = null;
 	private String host = HOST_UNDEFINED;
 	private int port = PORT_UNDEFINED;
 	private Map<BlockPos, IConnectionListener> listeners = null;
+	private Map<BlockPos, IReader> readers = null;
 	private ItemStack inventoryCard = null;
 
 	// Keep track of sockets to close on server stop
 	public static List<Socket> sockets;
-
-	@Override
-	public void onChunkUnload() {
-		super.onChunkUnload();
-
-		connect(HOST_UNDEFINED, PORT_UNDEFINED, true);
-	}
 
 	public void connect(String host, int port, boolean disconnect) {
 		if (!listeners.containsKey(pos)) {
@@ -114,10 +113,24 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 				NBTTagCompound compoundPosition = listListeners
 						.getCompoundTagAt(i);
 				BlockPos pos = new BlockPos(
-						compoundPosition.getInteger(NBT_LISTENER_POS_X),
-						compoundPosition.getInteger(NBT_LISTENER_POS_Y),
-						compoundPosition.getInteger(NBT_LISTENER_POS_Z));
+						compoundPosition.getInteger(NBT_POS_X),
+						compoundPosition.getInteger(NBT_POS_Y),
+						compoundPosition.getInteger(NBT_POS_Z));
 				listeners.put(pos, null);
+			}
+		}
+
+		if (compound.hasKey(NBT_READERS)) {
+			readers = new HashMap<BlockPos, IReader>();
+			NBTTagList listReaders = compound.getTagList(NBT_READERS, 10);
+			for (int i = 0; i < listReaders.tagCount(); i++) {
+				NBTTagCompound compoundPosition = listReaders
+						.getCompoundTagAt(i);
+				BlockPos pos = new BlockPos(
+						compoundPosition.getInteger(NBT_POS_X),
+						compoundPosition.getInteger(NBT_POS_Y),
+						compoundPosition.getInteger(NBT_POS_Z));
+				readers.put(pos, null);
 			}
 		}
 	}
@@ -138,12 +151,24 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 			NBTTagList listListeners = new NBTTagList();
 			for (BlockPos pos : listeners.keySet()) {
 				NBTTagCompound compoundPosition = new NBTTagCompound();
-				compoundPosition.setInteger(NBT_LISTENER_POS_X, pos.getX());
-				compoundPosition.setInteger(NBT_LISTENER_POS_Y, pos.getY());
-				compoundPosition.setInteger(NBT_LISTENER_POS_Z, pos.getZ());
+				compoundPosition.setInteger(NBT_POS_X, pos.getX());
+				compoundPosition.setInteger(NBT_POS_Y, pos.getY());
+				compoundPosition.setInteger(NBT_POS_Z, pos.getZ());
 				listListeners.appendTag(compoundPosition);
 			}
 			compound.setTag(NBT_LISTENERS, listListeners);
+		}
+
+		if (readers != null) {
+			NBTTagList listReaders = new NBTTagList();
+			for (BlockPos pos : readers.keySet()) {
+				NBTTagCompound compoundPosition = new NBTTagCompound();
+				compoundPosition.setInteger(NBT_POS_X, pos.getX());
+				compoundPosition.setInteger(NBT_POS_Y, pos.getY());
+				compoundPosition.setInteger(NBT_POS_Z, pos.getZ());
+				listReaders.appendTag(compoundPosition);
+			}
+			compound.setTag(NBT_READERS, listReaders);
 		}
 	}
 
@@ -171,6 +196,15 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 		listeners.put(pos, listener);
 	}
 
+	@Override
+	public void addReader(BlockPos pos, IReader reader) {
+		if (readers == null) {
+			readers = new HashMap<BlockPos, IReader>();
+		}
+
+		readers.put(pos, reader);
+	}
+
 	private class ConnectionWorker implements Runnable {
 		@Override
 		public void run() {
@@ -180,6 +214,8 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 					for (BlockPos key : listeners.keySet())
 						listeners.get(key).onConnected(socket);
 				}
+				// start reading till socket closed
+				read();
 			} catch (UnknownHostException e) {
 				if (listeners != null) {
 					for (BlockPos key : listeners.keySet())
@@ -190,6 +226,34 @@ public class TileEntitySocketConnector extends TileEntityConnectionProviderBase
 					for (BlockPos key : listeners.keySet())
 						listeners.get(key).onFail(e);
 				}
+			}
+		}
+
+		public void read() {
+			if (isConnected()) {
+				if (readers != null) {
+					for (BlockPos pos : readers.keySet()) {
+						if (readers.get(pos) == null) {
+							readers.put(pos,
+									(IReader) worldObj.getTileEntity(pos));
+						}
+					}
+				}
+
+				try (BufferedReader in = new BufferedReader(
+						new InputStreamReader(socket.getInputStream()))) {
+					String line;
+					while ((line = in.readLine()) != null) {
+						for (IReader reader : readers.values()) {
+							reader.onRead(line);
+						}
+					}
+				} catch (IOException e) {
+					for (IConnectionListener listener : listeners.values()) {
+						listener.onFail(e);
+					}
+				}
+
 			}
 		}
 	}

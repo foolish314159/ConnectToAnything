@@ -1,22 +1,13 @@
 package connecttoanything.block;
 
-import connecttoanything.api.IConnectionListener;
-import connecttoanything.api.IConnectionProvider;
-import connecttoanything.ref.R;
-import connecttoanything.tileentity.TileEntitySocketCable;
-import connecttoanything.tileentity.TileEntitySocketConnector;
-import connecttoanything.tileentity.TileEntitySocketReader;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import connecttoanything.ref.R;
+import connecttoanything.tileentity.TileEntitySocketReader;
 
 public class BlockSocketReader extends BlockContainerBase {
 
@@ -36,7 +27,8 @@ public class BlockSocketReader extends BlockContainerBase {
 		if (!worldIn.isRemote) {
 			TileEntitySocketReader te = (TileEntitySocketReader) worldIn
 					.getTileEntity(pos);
-			te.addConnectionListener(pos, (IConnectionListener) te);
+			te.addConnectionListener(pos, te);
+			te.addReader(pos, te);
 		}
 
 		return true;

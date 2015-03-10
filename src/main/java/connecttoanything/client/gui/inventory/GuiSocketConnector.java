@@ -41,6 +41,7 @@ public class GuiSocketConnector extends GuiContainer {
 
 	public void setConnected(boolean connected) {
 		this.connected = connected;
+		buttonConnect.displayString = connected ? "Stop" : "Start";
 	}
 
 	@Override

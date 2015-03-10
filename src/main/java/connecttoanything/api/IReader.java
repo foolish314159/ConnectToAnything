@@ -3,14 +3,11 @@ package connecttoanything.api;
 public interface IReader {
 
 	/**
-	 * Reads the next line from specified provider
+	 * Called when a line has been read from a master provider
 	 * 
-	 * @param provider
-	 *            - any {@link IConnectionProvider} with access to a socket
-	 *            connector
-	 * @return the next line from a connector (blocking call) or null immediatly
-	 *         if {@link IConnectionProvider #isConnected()} returns false
+	 * @param line
+	 *            - line read from socket
 	 */
-	public String readLine(IConnectionProvider provider);
+	public void onRead(String line);
 
 }

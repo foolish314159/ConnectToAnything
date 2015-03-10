@@ -38,4 +38,14 @@ public interface IConnectionProvider {
 	 *            - BlockPos of the listener
 	 */
 	public void addConnectionListener(BlockPos pos, IConnectionListener listener);
+
+	/**
+	 * Adds an {@link IReader} to the current network of providers.<br>
+	 * All listeners will be stored by the master and notified when a line is
+	 * read from the socket.
+	 * 
+	 * @param pos
+	 *            - BlockPos of the listener
+	 */
+	public void addReader(BlockPos pos, IReader reader);
 }

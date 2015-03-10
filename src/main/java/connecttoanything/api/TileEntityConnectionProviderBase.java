@@ -84,4 +84,12 @@ public abstract class TileEntityConnectionProviderBase extends TileEntity
 		}
 	}
 
+	@Override
+	public void addReader(BlockPos pos, IReader reader) {
+		IConnectionProvider master = getMaster(null);
+		if (master != null) {
+			master.addReader(pos, reader);
+		}
+	}
+
 }
