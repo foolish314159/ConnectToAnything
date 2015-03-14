@@ -58,7 +58,8 @@ public class R {
 
 	public static enum GUI {
 		CONNECTION_CARD("item/connection_card.png", 176, 110), SOCKET_CONNECTOR(
-				"inventory/socket_connector.png", 176, 166);
+				"inventory/socket_connector.png", 176, 166), SOCKET_READER(
+				"inventory/socket_reader.png", 176, 166);
 
 		private ResourceLocation res;
 		private int width, height;

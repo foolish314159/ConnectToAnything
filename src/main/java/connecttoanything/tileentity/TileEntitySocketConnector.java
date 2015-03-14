@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
+import connecttoanything.ConnectToAnything;
 import connecttoanything.api.IConnectionListener;
 import connecttoanything.api.IConnectionProvider;
 import connecttoanything.api.IReader;
